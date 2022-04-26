@@ -5,6 +5,7 @@ namespace Drupal\acquia_cms_common\Commands;
 use Consolidation\AnnotatedCommand\CommandData;
 use Consolidation\AnnotatedCommand\CommandResult;
 use Drupal\acquia_cms_common\Services\AcmsUtilityService;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drush\Commands\DrushCommands;
 use Drush\Drush;
@@ -29,16 +30,26 @@ final class Hooks extends DrushCommands {
   protected $acmsUtilityService;
 
   /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
    * Constructs a WebformSubmissionLogRouteSubscriber object.
    *
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
    * @param \Drupal\acquia_cms_common\Services\AcmsUtilityService $acms_utility_service
    *   The acms utility service.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configuration factory.
    */
-  public function __construct(ModuleHandlerInterface $module_handler, AcmsUtilityService $acms_utility_service) {
+  public function __construct(ModuleHandlerInterface $module_handler, AcmsUtilityService $acms_utility_service, ConfigFactoryInterface $config_factory) {
     $this->moduleHandler = $module_handler;
     $this->acmsUtilityService = $acms_utility_service;
+    $this->configFactory = $config_factory;
   }
 
   /**
@@ -108,9 +119,8 @@ final class Hooks extends DrushCommands {
    * @hook post-command acms:import-site-studio-packages
    */
   public function importSiteStudioPackagesPostCommand($result, CommandData $commandData) {
-    $config = \Drupal::config('cohesion.settings');
-    $cohesion_configured = $config->get('api_key') && $config->get('organization_key');
-    if ($cohesion_configured) {
+    $config = $this->configFactory->get('cohesion.settings');
+    if ($config->get('api_key') && $config->get('organization_key')) {
       $this->say(dt('Rebuilding all entities.'));
       $result = $this->acmsUtilityService->rebuildSiteStudio();
       $this->yell('Finished rebuilding.');

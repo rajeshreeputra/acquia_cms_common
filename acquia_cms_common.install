@@ -8,6 +8,20 @@
 use Drupal\Core\Config\FileStorage;
 
 /**
+ * Implements hook_install().
+ */
+function acquia_cms_common_install() {
+  user_role_grant_permissions('anonymous', [
+    'access content',
+    'view media',
+  ]);
+  user_role_grant_permissions('authenticated', [
+    'access content',
+    'view media',
+  ]);
+}
+
+/**
  * Add new text format 'Full HTML'.
  */
 function acquia_cms_common_update_8001() {
