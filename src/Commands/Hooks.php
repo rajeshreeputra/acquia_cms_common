@@ -22,7 +22,7 @@ final class Hooks extends DrushCommands {
   protected $moduleHandler;
 
   /**
-   * The The acms utility service.
+   * The acms utility service.
    *
    * @var \Drupal\acquia_cms_common\Services\AcmsUtilityService
    */
@@ -103,12 +103,14 @@ final class Hooks extends DrushCommands {
   }
 
   /**
-   * Run site studio rebuild after acquia_cms_site_studio module enable.
+   * Run site studio rebuild after package import.
    *
-   * @hook post-command pm:enable
+   * @hook post-command acms:import-site-studio-packages
    */
-  public function postCommand($result, CommandData $commandData) {
-    if (in_array('acquia_cms_site_studio', $commandData->getArgsWithoutAppName()['modules'])) {
+  public function importSiteStudioPackagesPostCommand($result, CommandData $commandData) {
+    $config = \Drupal::config('cohesion.settings');
+    $cohesion_configured = $config->get('api_key') && $config->get('organization_key');
+    if ($cohesion_configured) {
       $this->say(dt('Rebuilding all entities.'));
       $result = $this->acmsUtilityService->rebuildSiteStudio();
       $this->yell('Finished rebuilding.');

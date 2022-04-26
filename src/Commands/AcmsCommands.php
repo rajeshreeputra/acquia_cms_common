@@ -222,4 +222,16 @@ class AcmsCommands extends DrushCommands implements SiteAliasManagerAwareInterfa
     }
   }
 
+  /**
+   * Import and rebuild site studio packages.
+   *
+   * @command acms:import-site-studio-packages
+   * @aliases aissp
+   * @usage acms:import-site-studio-packages
+   *   Import site studio package from modules.
+   */
+  public function importSiteStudioPackages() {
+    \Drupal::service('acquia_cms_common.utility')->siteStudioPackageImport();
+  }
+
 }

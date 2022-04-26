@@ -84,6 +84,25 @@ class AcmsUtilityService {
   }
 
   /**
+   * Build and import site studio packages.
+   *
+   * @throws \Exception
+   */
+  public function siteStudioPackageImport() {
+    // If cohesion keys has been configured and
+    // acquia_cms_site_studio module exists lets import all elements.
+    if ($this->moduleHandler->moduleExists('acquia_cms_site_studio')) {
+      $config = \Drupal::config('cohesion.settings');
+      $cohesion_configured = $config->get('api_key') && $config->get('organization_key');
+      if ($cohesion_configured) {
+        batch_set(install_acms_site_studio_initialize());
+        batch_set(site_studio_import_ui_kit());
+        return drush_backend_batch_process();
+      }
+    }
+  }
+
+  /**
    * Validates an array of config data that contains dependency information.
    *
    * Copied from Drupal/Core/Config/ConfigInstaller.php.
