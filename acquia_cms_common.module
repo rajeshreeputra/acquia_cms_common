@@ -266,10 +266,10 @@ function acquia_cms_common_system_breadcrumb_alter(Breadcrumb &$breadcrumb, Rout
  */
 function acquia_cms_common_module_implements_alter(&$implementations, $hook) {
   // Prevent installation of site studio package on module install during
-  // site installation or site set up with starter kit tools are in progress,
+  // site installation or site set up with starter kit tools,
   // we have dedicated drush command and install task to perform the same.
   // This way we can improve the overall installation time.
-  if (($hook == 'modules_installed' && InstallerKernel::installationAttempted()) || getenv('starter_kit_progress')) {
+  if (($hook == 'modules_installed' && InstallerKernel::installationAttempted()) || getenv('STARTER_KIT_PROGRESS')) {
     unset($implementations['cohesion_sync']);
   }
 }
