@@ -5,6 +5,7 @@ namespace Drupal\acquia_cms_common\Commands;
 use Consolidation\AnnotatedCommand\CommandData;
 use Consolidation\AnnotatedCommand\CommandResult;
 use Drupal\acquia_cms_common\Services\AcmsUtilityService;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drush\Commands\DrushCommands;
 use Drush\Drush;
@@ -22,11 +23,18 @@ final class Hooks extends DrushCommands {
   protected $moduleHandler;
 
   /**
-   * The The acms utility service.
+   * The acms utility service.
    *
    * @var \Drupal\acquia_cms_common\Services\AcmsUtilityService
    */
   protected $acmsUtilityService;
+
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
 
   /**
    * Constructs a WebformSubmissionLogRouteSubscriber object.
@@ -35,10 +43,13 @@ final class Hooks extends DrushCommands {
    *   The module handler.
    * @param \Drupal\acquia_cms_common\Services\AcmsUtilityService $acms_utility_service
    *   The acms utility service.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configuration factory.
    */
-  public function __construct(ModuleHandlerInterface $module_handler, AcmsUtilityService $acms_utility_service) {
+  public function __construct(ModuleHandlerInterface $module_handler, AcmsUtilityService $acms_utility_service, ConfigFactoryInterface $config_factory) {
     $this->moduleHandler = $module_handler;
     $this->acmsUtilityService = $acms_utility_service;
+    $this->configFactory = $config_factory;
   }
 
   /**
@@ -103,12 +114,13 @@ final class Hooks extends DrushCommands {
   }
 
   /**
-   * Run site studio rebuild after acquia_cms_site_studio module enable.
+   * Run site studio rebuild after package import.
    *
-   * @hook post-command pm:enable
+   * @hook post-command acms:import-site-studio-packages
    */
-  public function postCommand($result, CommandData $commandData) {
-    if (in_array('acquia_cms_site_studio', $commandData->getArgsWithoutAppName()['modules'])) {
+  public function importSiteStudioPackagesPostCommand($result, CommandData $commandData) {
+    $config = $this->configFactory->get('cohesion.settings');
+    if ($config->get('api_key') && $config->get('organization_key')) {
       $this->say(dt('Rebuilding all entities.'));
       $result = $this->acmsUtilityService->rebuildSiteStudio();
       $this->yell('Finished rebuilding.');

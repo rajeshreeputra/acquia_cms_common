@@ -6,6 +6,7 @@ use Consolidation\AnnotatedCommand\CommandData;
 use Consolidation\AnnotatedCommand\CommandError;
 use Consolidation\SiteAlias\SiteAliasManagerAwareInterface;
 use Consolidation\SiteAlias\SiteAliasManagerAwareTrait;
+use Drupal\acquia_cms_common\Services\AcmsUtilityService;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\KeyValueStore\KeyValueFactory;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
@@ -43,6 +44,13 @@ class AcmsCommands extends DrushCommands implements SiteAliasManagerAwareInterfa
   protected $systemSchema;
 
   /**
+   * The acms utility service.
+   *
+   * @var \Drupal\acquia_cms_common\Services\AcmsUtilityService
+   */
+  protected $acmsUtilityService;
+
+  /**
    * Constructs a ModuleHandlerInterface object.
    *
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
@@ -51,11 +59,14 @@ class AcmsCommands extends DrushCommands implements SiteAliasManagerAwareInterfa
    *   The logger factory.
    * @param \Drupal\Core\KeyValueStore\KeyValueFactory $key_value
    *   The System schema object from KeyValue factory.
+   * @param \Drupal\acquia_cms_common\Services\AcmsUtilityService $acms_utility_service
+   *   The acms utility service.
    */
-  public function __construct(ModuleHandlerInterface $module_handler, LoggerChannelFactoryInterface $loggerFactory, KeyValueFactory $key_value) {
+  public function __construct(ModuleHandlerInterface $module_handler, LoggerChannelFactoryInterface $loggerFactory, KeyValueFactory $key_value, AcmsUtilityService $acms_utility_service) {
     $this->moduleHandler = $module_handler;
     $this->loggerFactory = $loggerFactory->get('acquia_cms_db_update');
     $this->systemSchema = $key_value->get('system.schema');
+    $this->acmsUtilityService = $acms_utility_service;
   }
 
   /**
@@ -220,6 +231,18 @@ class AcmsCommands extends DrushCommands implements SiteAliasManagerAwareInterfa
     if ($messages) {
       return new CommandError(implode(' ', $messages));
     }
+  }
+
+  /**
+   * Import and rebuild site studio packages.
+   *
+   * @command acms:import-site-studio-packages
+   * @aliases aissp
+   * @usage acms:import-site-studio-packages
+   *   Import site studio package from modules.
+   */
+  public function importSiteStudioPackages() {
+    $this->acmsUtilityService->siteStudioPackageImport();
   }
 
 }
