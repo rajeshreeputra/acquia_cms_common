@@ -231,6 +231,32 @@ function _acquia_cms_common_update_view_display_options_style($view_name, $displ
 }
 
 /**
+ * Helper function to update configuration for specified key.
+ *
+ * This is being used for updating page CT configurations.
+ * @param string $config_name
+ *   The configuration name which needs to be updated.
+ * @param array $configurations
+ */
+function _acquia_cms_common_update_page_configurations(string $config_name, array $configurations) {
+  $configFactory = \Drupal::service('config.factory');
+  $config = $configFactory->getEditable($config_name);
+  $need_save = FALSE;
+  if (!empty($config)) {
+    foreach ($configurations as $key => $value) {
+      if ($config->get($key) != $value) {
+        $config->set($key, $value);
+        $need_save = TRUE;
+      }
+    }
+    // Only save if there's changes in value.
+    if ($need_save) {
+      $config->save();
+    }
+  }
+}
+
+/**
  * Implements hook_mail_alter().
  */
 function acquia_cms_common_mail_alter(&$message) {
