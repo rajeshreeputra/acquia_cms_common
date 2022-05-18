@@ -81,6 +81,57 @@ class ConfigEventsSubscriber implements EventSubscriberInterface {
           case 'views.view.article_cards':
             _acquia_cms_common_update_view_display_options_style('article_cards', 'default', 'view_tpl_article_cards_slider');
             break;
+
+          case 'field.field.node.page.body':
+            _acquia_cms_common_update_page_configurations('field.field.node.page.body', [
+              'label' => 'Search Description',
+              'description' => 'A short description or teaser which will be displayed in search results.'
+            ]);
+            break;
+
+          case 'core.entity_form_display.node.page.default':
+            _acquia_cms_common_update_page_configurations('core.entity_form_display.node.page.default', [
+              'content.field_layout_canvas' => [
+                'type'=> 'cohesion_layout_builder_widget',
+                'weight' => 2,
+                'settings' => [],
+                'third_party_settings' => [],
+                'region' => 'content'
+              ]
+            ]);
+            break;
+
+          case 'core.entity_view_display.node.page.default':
+            _acquia_cms_common_update_page_configurations('core.entity_view_display.node.page.default', [
+              'content.field_layout_canvas' => [
+                'type'=> 'cohesion_entity_reference_revisions_entity_view',
+                'weight' => 2,
+                'label' => 'hidden',
+                'settings' => [
+                  'view_mode' => 'default',
+                  'link'  => false
+                ],
+                'third_party_settings' => [],
+                'region' => 'content'
+              ]
+            ]);
+            break;
+
+          case 'core.entity_view_display.node.page.horizontal_card':
+            _acquia_cms_common_update_page_configurations('core.entity_view_display.node.page.horizontal_card', [
+              'content.field_layout_canvas' => [
+                'type'=> 'cohesion_entity_reference_revisions_entity_view',
+                'weight' => 2,
+                'label' => 'hidden',
+                'settings' => [
+                  'view_mode' => 'default',
+                  'link'  => false
+                ],
+                'third_party_settings' => [],
+                'region' => 'content'
+              ]
+            ]);
+            break;
         }
       }
       if ($this->moduleHandler->moduleExists('acquia_cms_site_studio') && $this->moduleHandler->moduleExists('acquia_cms_search')) {
