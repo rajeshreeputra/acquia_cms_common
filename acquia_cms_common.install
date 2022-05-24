@@ -20,7 +20,7 @@ function acquia_cms_common_install() {
     'view media',
   ]);
   
-  // Re-write the content view on module install,
+  // Re-write the content and media view on module install,
   // since we have moved this config in optional directory.
   $module_path = \Drupal::moduleHandler()->getModule('acquia_cms_common')->getPath();
   $config_optional = $module_path . '/config/optional';
@@ -28,6 +28,8 @@ function acquia_cms_common_install() {
 
   $config_storage = \Drupal::service('config.storage');
   $config_storage->write('views.view.content', $source_optional_dir->read('views.view.content'));
+  $config_storage->write('views.view.media', $source_optional_dir->read('views.view.media'));
+  
 }
 
 /**
