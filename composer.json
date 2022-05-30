@@ -4,6 +4,7 @@
     "description": "Handles shared functionality for Acquia CMS.",
     "license": "GPL-2.0-or-later",
     "require": {
+        "acquia/acquia-cms-starterkit": "dev-develop",
         "acquia/drupal-environment-detector": "^1.4",
         "acquia/memcache-settings": "^1",
         "cweagans/composer-patches": "^1.7",
@@ -96,6 +97,10 @@
         }
     },
     "repositories": {
+        "acquia_cms_starterkit": {
+            "type": "vcs",
+            "url": "git@github.com:acquia/acquia-cms-starterkit.git"
+        },
         "drupal": {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
