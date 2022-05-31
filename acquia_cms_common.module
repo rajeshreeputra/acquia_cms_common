@@ -34,6 +34,15 @@ function acquia_cms_common_module_preinstall($module) {
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function acquia_cms_common_form_user_login_form_alter(array &$form) {
+  if (Drupal::config('acquia_cms_common.settings')->get('user_login_redirection')) {
+    $form['#submit'][] = '\Drupal\acquia_cms_common\RedirectHandler::submitForm';
+  }
+}
+
+/**
  * Implements hook_ENTITY_TYPE_insert() for node types.
  */
 function acquia_cms_common_node_type_insert(NodeTypeInterface $node_type) {
