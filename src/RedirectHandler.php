@@ -5,6 +5,7 @@ namespace Drupal\acquia_cms_common;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Path\PathValidatorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
@@ -43,6 +44,13 @@ final class RedirectHandler implements ContainerInjectionInterface {
   private $pathValidator;
 
   /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * RedirectHandler constructor.
    *
    * @param \Drupal\Core\Entity\EntityStorageInterface $user_storage
@@ -51,11 +59,14 @@ final class RedirectHandler implements ContainerInjectionInterface {
    *   The current active request object.
    * @param \Drupal\Core\Path\PathValidatorInterface $path_validator
    *   The path validator service.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
    */
-  public function __construct(EntityStorageInterface $user_storage, Request $current_request, PathValidatorInterface $path_validator) {
+  public function __construct(EntityStorageInterface $user_storage, Request $current_request, PathValidatorInterface $path_validator, ModuleHandlerInterface $module_handler) {
     $this->userStorage = $user_storage;
     $this->request = $current_request;
     $this->pathValidator = $path_validator;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -65,7 +76,8 @@ final class RedirectHandler implements ContainerInjectionInterface {
     return new static(
       $container->get('entity_type.manager')->getStorage('user'),
       $container->get('request_stack')->getCurrentRequest(),
-      $container->get('path.validator')
+      $container->get('path.validator'),
+      $container->get('module_handler')
     );
   }
 
@@ -107,7 +119,7 @@ final class RedirectHandler implements ContainerInjectionInterface {
         $url = Url::fromUri('internal:/user/' . $user->id() . '/moderation/dashboard');
         $form_state->setRedirectUrl($url);
       }
-      elseif ($this->isDeveloper($user)) {
+      elseif ($this->isDeveloper($user) && $this->moduleHandler->moduleExists('cohesion')) {
         $form_state->setRedirect('cohesion.settings');
       }
       elseif ($this->isUserAdministrator($user)) {
