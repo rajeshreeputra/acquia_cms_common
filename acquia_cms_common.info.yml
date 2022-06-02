@@ -6,6 +6,8 @@ core_version_requirement: ^9
 dependencies:
   - drupal:block
   - drupal:ckeditor
+  - drupal:config
+  - drupal:config_rewrite
   - drupal:content_moderation
   - drupal:entity_clone
   - drupal:focal_point
