@@ -19,7 +19,19 @@ function acquia_cms_common_install() {
     'access content',
     'view media',
   ]);
-  
+
+  // Enable acquia_claro theme.
+  $themesList = \Drupal::service('extension.list.theme')->getList();
+  $themesInstall = ["olivero"];
+  if (isset($themesList['acquia_claro'])) {
+   $themesInstall[] = "acquia_claro";
+  }
+  \Drupal::service('theme_installer')->install($themesInstall);
+  \Drupal::configFactory() ->getEditable('system.theme') ->set('default', 'olivero') ->save();
+  if (in_array("acquia_claro", $themesInstall)) {
+   \Drupal::configFactory() ->getEditable('system.theme') ->set('admin', "acquia_claro") ->save();
+  }
+
   // Re-write the content and media view on module install,
   // since we have moved this config in optional directory.
   $module_path = \Drupal::moduleHandler()->getModule('acquia_cms_common')->getPath();
@@ -29,7 +41,7 @@ function acquia_cms_common_install() {
   $config_storage = \Drupal::service('config.storage');
   $config_storage->write('views.view.content', $source_optional_dir->read('views.view.content'));
   $config_storage->write('views.view.media', $source_optional_dir->read('views.view.media'));
-  
+
 }
 
 /**
