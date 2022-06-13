@@ -45,6 +45,29 @@ function acquia_cms_common_install() {
 }
 
 /**
+ * Implements hook_config_schema_info_alter().
+ */
+function acquia_cms_common_config_schema_info_alter(&$definitions) {
+  $schemaMapping = [
+    'type' => 'mapping',
+    'mapping' => [
+      'default_value' => ['type' => 'boolean'],
+      'disable' => ['type' => 'boolean'],
+      'hidden' => ['type' => 'boolean'],
+    ],
+  ];
+  $definitions['entity_clone.settings']['mapping']['form_settings']['mapping']['cohesion_layout'] = $schemaMapping;
+  $definitions['entity_clone.settings']['mapping']['form_settings']['mapping']['component_content'] = $schemaMapping;
+  $definitions['entity_clone.settings']['mapping']['form_settings']['mapping']['content_moderation_state'] = $schemaMapping;
+  $definitions['entity_clone.settings']['mapping']['form_settings']['mapping']['content_moderation_state'] = $schemaMapping;
+  $definitions['entity_clone.settings']['mapping']['form_settings']['mapping']['crop'] = $schemaMapping;
+  $definitions['entity_clone.settings']['mapping']['form_settings']['mapping']['media'] = $schemaMapping;
+  $definitions['entity_clone.settings']['mapping']['form_settings']['mapping']['path_alias'] = $schemaMapping;
+  $definitions['entity_clone.settings']['mapping']['form_settings']['mapping']['redirect'] = $schemaMapping;
+  $definitions['entity_clone.settings']['mapping']['form_settings']['mapping']['search_api_task'] = $schemaMapping;
+}
+
+/**
  * Add new text format 'Full HTML'.
  */
 function acquia_cms_common_update_8001() {

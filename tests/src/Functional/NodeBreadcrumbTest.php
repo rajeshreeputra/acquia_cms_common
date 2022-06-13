@@ -108,4 +108,21 @@ class NodeBreadcrumbTest extends BrowserTestBase {
     ]);
   }
 
+  /**
+   * Returns the breadcrumb contents of the current page in the internal browser.
+   */
+  protected function getBreadcrumbParts() {
+    $parts = [];
+    $elements = $this->xpath('//nav[@aria-labelledby="system-breadcrumb"]/div/ol/li/a');
+    if (!empty($elements)) {
+      foreach ($elements as $element) {
+        $parts[] = [
+          'text' => $element->getText(),
+          'href' => $element->getAttribute('href'),
+          'title' => $element->getAttribute('title'),
+        ];
+      }
+    }
+    return $parts;
+  }
 }
