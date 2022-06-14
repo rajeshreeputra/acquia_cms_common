@@ -18,6 +18,7 @@ use Drupal\imce\Imce;
 use Drupal\node\NodeTypeInterface;
 use Drupal\workbench_email\TemplateInterface;
 use Symfony\Component\Yaml\Yaml;
+use Acquia\DrupalEnvironmentDetector\AcquiaDrupalEnvironmentDetector as Environment;
 
 /**
  * Implements hook_preinstall().
@@ -323,5 +324,20 @@ function acquia_cms_common_preprocess_status_report_general_info(&$variables) {
   if ($starter_kit = \Drupal::state()->get('acquia_cms.starter_kit')) {
     // Store selected starter kit into the variable.
     $variables['acquia_cms']['starter_kit'] = $starter_kits[$starter_kit];
+  }
+}
+
+/** 
+ * Implements hook_modules_installed().
+ */
+function acquia_cms_common_modules_installed($modules) {
+  if (in_array('imagemagick', $modules) && Environment::isAhEnv()) {
+    $config_factory = \Drupal::configFactory();
+    $config_factory->getEditable('imagemagick.settings')
+      ->set('path_to_binaries', '/usr/bin/')
+      ->save();
+    $config_factory->getEditable('system.image')
+      ->set('toolkit', 'imagemagick')
+      ->save();
   }
 }
