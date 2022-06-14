@@ -38,6 +38,15 @@ abstract class MediaTypeTestBase extends ContentModelTestBase {
   protected $mediaType;
 
   /**
+   * The machine name of the field.
+   *
+   * This should be overridden by subclasses.
+   *
+   * @var string
+   */
+  protected $fieldName;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
@@ -220,9 +229,15 @@ abstract class MediaTypeTestBase extends ContentModelTestBase {
       $value = $this->generateSourceFieldValue($media_type);
     }
 
-    $field = $media_type->getSource()
-      ->getSourceFieldDefinition($media_type)
-      ->getLabel();
+    /**
+    * Get the field name from subclases if missing use fallback value
+    */
+    $field = $this->fieldName;
+    if(empty($field)){
+      $field = $media_type->getSource()
+        ->getSourceFieldDefinition($media_type)
+        ->getLabel();
+    }
 
     $page = $this->getSession()->getPage();
     if ($value instanceof FileInterface) {
